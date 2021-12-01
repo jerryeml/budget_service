@@ -60,9 +60,7 @@ class BudgetService(IBudgetReoo):
 
         if end_date < start_date:
             return 0
-
-        tmp_start_end_date = start_date + monthdelta(1)
-        start_end_date = date(tmp_start_end_date.year, tmp_start_end_date.month, 1)
+        start_end_date = date(start_date.year, start_date.month + 1, 1) - datetime.timedelta(days=1)
         end_start_date = date(end_date.year, end_date.month, 1)
 
         if start_date.year == end_date.year and start_date.month == end_date.month:

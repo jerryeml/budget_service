@@ -46,7 +46,7 @@ class BudgetService(IBudgetReoo):
         for b in self.budgets:
             lookup[b.year_month] = b.amount
 
-        while cur_date.year <= end.year and cur_date.month < end.month:
+        while cur_date < date(end.year, end.month, 1):
             keys.append(str(cur_date)[0:4] + str(cur_date)[5:7])
             cur_date = cur_date + monthdelta(1)
 
@@ -58,6 +58,8 @@ class BudgetService(IBudgetReoo):
 
     def query(self, start_date, end_date) -> float:
 
+        if end_date < start_date:
+            return 0
         start_end_date = date(start_date.year, start_date.month + 1, 1) - datetime.timedelta(days=1)
         end_start_date = date(end_date.year, end_date.month, 1)
 

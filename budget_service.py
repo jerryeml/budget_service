@@ -25,8 +25,8 @@ class BudgetService(IBudgetReoo):
             month = str(start_date)[5:7]
             days = monthrange(int(year), int(month))[1]
             print('Number of days: {}'.format(days))
-            if year == budget.year_month[:4] and month == budget.amount[4:6]:
-                self.current_v = (budget.amount or 0)
+            if year == budget.year_month[:4] and month == budget.year_month[4:6]:
+                self.current_v = budget.amount
 
         # get month budget
         if days < 0:

@@ -3,6 +3,8 @@
 # by天的預算 金額是int
 # 假設一個月 三十萬 查詢一天 回傳一萬
 # 輸入查詢日期(date) 回傳預算
+
+from monthdelta import monthdelta
 from datetime import date
 import datetime
 from calendar import monthrange
@@ -36,6 +38,24 @@ class BudgetService(IBudgetReoo):
         result = (diff + 1) * self.current_v // days
         return result
 
+    def get_interval_months(self, start, end):
+        keys = []
+        cur_date = start + monthdelta(1)
+        lookup = {}
+
+        for b in self.budgets:
+            lookup[b.year_month] = b.amount
+
+        while cur_date.year <= end.year and cur_date.month < end.month:
+            keys.append(str(cur_date)[0:4] + str(cur_date)[5:7])
+            cur_date = cur_date + monthdelta(1)
+
+        total = 0
+        for x in keys:
+            if x in lookup:
+                total += lookup[x]
+        return total
+
     def query(self, start_date, end_date) -> float:
 
         start_end_date = date(start_date.year, start_date.month + 1, 1) - datetime.timedelta(days=1)
@@ -45,9 +65,10 @@ class BudgetService(IBudgetReoo):
             return self.query_same_month_range(start_date, end_date)
 
         start_month_budget = self.query_same_month_range(start_date, start_end_date)
+        interval_month_budget = self.get_interval_months(start_date, end_date)
         end_date_budget = self.query_same_month_range(end_start_date, end_date)
 
-        return start_month_budget + end_date_budget
+        return start_month_budget + interval_month_budget + end_date_budget
 
     def get_all(self, budgets) -> list:
         self.budgets = budgets

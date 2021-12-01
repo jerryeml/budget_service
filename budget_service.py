@@ -4,6 +4,7 @@
 # 假設一個月 三十萬 查詢一天 回傳一萬
 # 輸入查詢日期(date) 回傳預算
 from datetime import date
+import datetime
 from calendar import monthrange
 
 
@@ -17,12 +18,8 @@ class BudgetService(IBudgetReoo):
         self.budgets = []
         self.current_v = 0
 
-    def query(self, start_date, end_date) -> float:
-
+    def query_same_month_range(self, start_date, end_date):
         days = -1
-
-        lookup = {}
-
         for budget in self.budgets:
             print(f'key: {budget.year_month}, value: {budget.amount}')
             year = str(start_date)[:4]
@@ -30,16 +27,27 @@ class BudgetService(IBudgetReoo):
             days = monthrange(int(year), int(month))[1]
             print('Number of days: {}'.format(days))
             if year == budget.year_month[:4] and month == budget.year_month[4:6]:
-                lookup[budget.year_month] = budget.amount
-                # self.current_v = budget.amount
-
-        # get month budget
+                self.current_v = budget.amount
+            # get month budget
         diff = (end_date - start_date).days
         if days < 0 or diff < 0:
             return 0
         print(f"diff: {diff}")
         result = (diff + 1) * self.current_v // days
         return result
+
+    def query(self, start_date, end_date) -> float:
+
+        start_end_date = date(start_date.year, start_date.month + 1, 1) - datetime.timedelta(days=1)
+        end_start_date = date(end_date.year, end_date.month, 1)
+
+        if start_date.month == end_date.month:
+            return self.query_same_month_range(start_date, end_date)
+
+        start_month_budget = self.query_same_month_range(start_date, start_end_date)
+        end_date_budget = self.query_same_month_range(end_start_date, end_date)
+
+        return start_month_budget + end_date_budget
 
     def get_all(self, budgets) -> list:
         self.budgets = budgets

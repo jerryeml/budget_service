@@ -6,6 +6,7 @@
 from datetime import date
 from calendar import monthrange
 
+
 class IBudgetReoo:
     def get_all() -> list:
         pass
@@ -17,22 +18,28 @@ class BudgetService(IBudgetReoo):
         self.current_v = 0
 
     def query(self, start_date, end_date) -> float:
-        print(f'budgets: {self.budgets}')
-        for k, v in self.budgets:
-            print(f'key: {k}, value: {v}')
-            year = str(start_date)[:4] 
+
+        days = -1
+
+        lookup = {}
+
+        for budget in self.budgets:
+            print(f'key: {budget.year_month}, value: {budget.amount}')
+            year = str(start_date)[:4]
             month = str(start_date)[5:7]
             days = monthrange(int(year), int(month))[1]
-            print( 'Number of days: {}'.format( days) )
-            if year == k[:4] and month == k[4:6]:
-                self.current_v = v 
+            print('Number of days: {}'.format(days))
+            if year == budget.year_month[:4] and month == budget.year_month[4:6]:
+                lookup[budget.year_month] = budget.amount
+                # self.current_v = budget.amount
 
         # get month budget
-        diff = (end_date - start_date).days + 1
+        diff = (end_date - start_date).days
+        if days < 0 or diff < 0:
+            return 0
         print(f"diff: {diff}")
-        result =  diff * self.current_v / days
+        result = (diff + 1) * self.current_v // days
         return result
-
 
     def get_all(self, budgets) -> list:
         self.budgets = budgets
@@ -41,4 +48,3 @@ class BudgetService(IBudgetReoo):
 
 if __name__ == "__main__":
     pass
-

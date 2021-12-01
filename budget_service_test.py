@@ -66,6 +66,6 @@ class BudgetServiceTests(unittest.TestCase):
         mock_budget = [Budget('202005', 31), Budget('202006', 60), Budget('202007', 93)]
         budget = self.b.get_all(mock_budget)
         start_date = date(2020, 5, 31)
-        end_date = date(2020, 6, 2)
+        end_date = date(2020, 7, 2)
         result = self.b.query(start_date, end_date)
         self.assertEqual(result, 67)

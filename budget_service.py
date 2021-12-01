@@ -61,7 +61,7 @@ class BudgetService(IBudgetReoo):
         start_end_date = date(start_date.year, start_date.month + 1, 1) - datetime.timedelta(days=1)
         end_start_date = date(end_date.year, end_date.month, 1)
 
-        if start_date.month == end_date.month:
+        if start_date.year == end_date.year and start_date.month == end_date.month:
             return self.query_same_month_range(start_date, end_date)
 
         start_month_budget = self.query_same_month_range(start_date, start_end_date)
